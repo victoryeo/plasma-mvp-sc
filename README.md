@@ -1,10 +1,10 @@
-# Plasma MVP
+# Plasma MVP for Smart Contract
 
-We're implementing [Minimum Viable Plasma](https://ethresear.ch/t/minimal-viable-plasma/426). This repository represents a work in progress and will undergo large-scale modifications as requirements change.
+This is an adaptation of the Plasma MVP from OmiseGo. It adds custom field to the Plasma Transaction.
 
 ## Overview
 
-Plasma MVP is split into four main parts: `root_chain`, `child_chain`, `client`, and `cli`. Below is an overview of each sub-project.
+Plasma MVP SC is split into four main parts: `root_chain`, `child_chain`, `client`, and `cli`. Below is an overview of each sub-project.
 
 ### root_chain
 
@@ -132,42 +132,23 @@ Shows a list of available commands.
 --help
 ```
 
-### `deposit`
+### `call curl`
 
 #### Description
 
-Creates a deposit transaction and submits it to the child chain.
+call json rpc method usijng curl
 
 #### Usage
 
 ```
-deposit <amount> <address>
+curl --data-binary 
 ```
 
 #### Example
 
 ```
-deposit 100 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7
+curl --data-binary '{"method": "set_dict", "params": { "a":  {"b":2 }} , "jsonrpc": "2.0", "id": 0 }' -H 'content-type:text/plain;'  http://localhost:8546/jsonrpc
 ```
-
-### `sendtx`
-
-#### Description
-
-Creates a transaction and submits it to the child chain.
-
-#### Usage
-
-```
-sendtx <blknum1> <txindex1> <oindex1> <blknum2> <txindex2> <oindex2> <cur12> <newowner1> <amount1> <newowner2> <amount2> <key1> [<key2>]
-```
-
-#### Example
-
-```
-sendtx 1 0 0 0 0 0 0x0 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7 50 0x4B3eC6c9dC67079E82152d6D55d8dd96a8e6AA26 45 3bb369fecdc16b93b99514d8ed9c2e87c5824cf4a6a98d2e8e91b7dd0c063304
-```
-
 ### `submitblock`
 
 #### Description
@@ -204,50 +185,23 @@ withdraw <blknum> <txindex> <oindex> <key1> [<key2>]
 withdraw 1000 0 0 3bb369fecdc16b93b99514d8ed9c2e87c5824cf4a6a98d2e8e91b7dd0c063304
 ```
 
-### `withdrawdeposit`
+### `finalize_exits`
 
 #### Description
 
-Withdraws from a deposit.
+Print the smart contract custom field to the console.
 
 #### Usage
 
 ```
-withdrawdeposit <owner> <blknum> <amount>
+finalize_exits <key1> [<key2>]
 ```
 
 #### Example
 
 ```
-withdrawdeposit 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7 1 100
+omg finalize_exits 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7
 ```
 
 
-## CLI Example
 
-Let's play around a bit:
-
-1. Deploy the root chain contract and start the child chain as per [Starting Plasma](#starting-plasma).
-
-2. Start by depositing:
-```
-omg deposit 100 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7
-```
-
-3. Send a transaction:
-```
-omg sendtx 1 0 0 0 0 0 0x0 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7 50 0x4B3eC6c9dC67079E82152d6D55d8dd96a8e6AA26 45 3bb369fecdc16b93b99514d8ed9c2e87c5824cf4a6a98d2e8e91b7dd0c063304
-```
-
-4.  Submit the block:
-```
-omg submitblock 3bb369fecdc16b93b99514d8ed9c2e87c5824cf4a6a98d2e8e91b7dd0c063304
-```
-
-5. Withdraw the original deposit (this is a double spend!):
-
-```
-omg withdrawdeposit 0xfd02EcEE62797e75D86BCff1642EB0844afB28c7 1 100
-```
-
-Note: The functionality to challenge double spends from the cli is still being worked on.
